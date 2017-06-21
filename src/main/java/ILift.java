@@ -9,5 +9,5 @@ public interface ILift {
     public boolean getReady();
     public void stop();
     public boolean getRouteCallLift();
-    public boolean getStateDoor();
+    //public boolean getStateDoor();
 }

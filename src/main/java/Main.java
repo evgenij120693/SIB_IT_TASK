@@ -6,7 +6,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class Main {
     public static void main(String[] args) {
-         CopyOnWriteArrayList<Call> queueCalls = new CopyOnWriteArrayList<Call>();
+        /* CopyOnWriteArrayList<Call> queueCalls = new CopyOnWriteArrayList<Call>();
         IElectricMotor electricMotor = new ElectricMotor(1000,1500, 2000);
         ILift smallLift = new Lift(electricMotor,9, "пассажирский");
 
@@ -37,7 +37,7 @@ public class Main {
         Thread thread5 = new Thread(new Runnable() {
             @Override
             public void run() {
-                Passenger passenger5 = new Passenger(1,2,  smallLift);
+                Passenger passenger5 = new Passenger(3,7,  smallLift);
                 passenger5.callLift();
             }
         });
@@ -47,7 +47,7 @@ public class Main {
         thread3.start();
         thread4.start();
         try {
-            Thread.sleep(2000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

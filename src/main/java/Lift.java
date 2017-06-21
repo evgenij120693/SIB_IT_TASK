@@ -12,12 +12,11 @@ public class Lift implements ILift, Runnable, ProjectConstants {
     private final int COUNT_FLOOR;
     private IElectricMotor electricMotor;
     private volatile int state = STATE_STOP;
-    private volatile boolean stateDoor = DOOR_OPEN;
     private volatile int floor = 1;
     private volatile int finalFloor;
     private volatile float idFirstPassenger;
     private volatile boolean ready = false;
-    private volatile boolean routeCallLift;
+    private volatile boolean routeCallLift = ROUTE_UP;
     private String typeLift;
     private CopyOnWriteArrayList<Call> queueCalls = new CopyOnWriteArrayList<Call>();
     private ConcurrentHashMap<Integer, Integer> numberWaitingOnTheFloorRU = new ConcurrentHashMap<>();
@@ -38,9 +37,6 @@ public class Lift implements ILift, Runnable, ProjectConstants {
         return routeCallLift;
     }
 
-    public boolean getStateDoor() {
-        return stateDoor;
-    }
 
     public int getFloor() {
         return floor;
@@ -70,7 +66,7 @@ public class Lift implements ILift, Runnable, ProjectConstants {
                 finalFloor = floor;
                 logger.trace("Лифт поехал за пассажиром №" + idPassenger + " на " + finalFloor + " этаж");
                 ready = true;
-                stateDoor = DOOR_CLOSE;
+               // stateDoor = DOOR_CLOSE;
                 idFirstPassenger = idPassenger;
                 //decrementWaitingOnTheFloor(floor, route);
             } else if ((state == STATE_MOVE_UP && floor < this.finalFloor && floor > this.floor)
@@ -91,8 +87,12 @@ public class Lift implements ILift, Runnable, ProjectConstants {
                 // incrementWaitingOnTheFloor(floor, route);
                 logger.trace("Пассажир №" + idPassenger + " ожидает лифт на " + this.finalFloor + " этаже.");
             } else {
+                String temp = "ВВЕРХ";
+                if(route == ROUTE_DOWN)
+                     temp = "ВНИЗ";
                 addCall(floor, route, CALL_OUTER, idPassenger);
-                logger.trace("Добавили вызов пассажира №" + idPassenger + " в очередь на " + floor + " этаже.");
+                logger.trace("Добавили вызов пассажира №" + idPassenger + " в очередь. Этаж "
+                        + floor + ", напрваление "+temp);
             }
             // incrementWaitingOnTheFloor(floor, route);
         }
@@ -105,7 +105,7 @@ public class Lift implements ILift, Runnable, ProjectConstants {
             logger.trace("Зашел пассажир №" + idPassenger + ". Добавил остановку на " + floor + " этаже ");
             if (route == ROUTE_DOWN) {
                 if (numberWaitingOnTheFloorRD.get(this.floor) == 1) {
-                    stateDoor = DOOR_CLOSE;
+                   // stateDoor = DOOR_CLOSE;
                     state = STATE_MOVE_DOWN;
                     ready = true;
                 }
@@ -126,7 +126,7 @@ public class Lift implements ILift, Runnable, ProjectConstants {
                 }
             } else if (route == ROUTE_UP) {
                 if (numberWaitingOnTheFloorRU.get(this.floor) == 1) {
-                    stateDoor = DOOR_CLOSE;
+                   // stateDoor = DOOR_CLOSE;
                     ready = true;
                     state = STATE_MOVE_UP;
                 }
@@ -156,7 +156,7 @@ public class Lift implements ILift, Runnable, ProjectConstants {
     }
 
     private void down(boolean emptyLift) {
-        stateDoor = DOOR_CLOSE;
+        //stateDoor = DOOR_CLOSE;
         if (!emptyLift) {
             logger.trace("Лифт поехал на " + finalFloor + " этаж. Едем вниз.");
             while (this.floor != finalFloor) {
@@ -203,7 +203,7 @@ public class Lift implements ILift, Runnable, ProjectConstants {
     }
 
     private void up(boolean emptyLift) {
-        stateDoor = DOOR_CLOSE;
+       // stateDoor = DOOR_CLOSE;
         if (!emptyLift) {
             logger.trace("Лифт поехал на " + finalFloor + " этаж. Едем вверх");
             while (this.floor != finalFloor) {
@@ -250,9 +250,9 @@ public class Lift implements ILift, Runnable, ProjectConstants {
     }
 
     public void stop() {
-        stateDoor = DOOR_OPEN;
+       // stateDoor = DOOR_OPEN;
         electricMotor.stopLift();
-        //changeNumberOnTheFloor();
+        checkNumberOnTheFloor();
 
     }
 
@@ -281,36 +281,20 @@ public class Lift implements ILift, Runnable, ProjectConstants {
         System.out.println("size waiting RD" + numberWaitingOnTheFloorRD.get(floor) +" to floor "+floor);*/
     }
 
-    private void changeNumberOnTheFloor() {
-        //System.out.println("state on change "+this.state);
-        // if (this.state == STATE_IN_OUT_PASSENGER) {
+    private void checkNumberOnTheFloor() {
         if (this.routeCallLift == ROUTE_UP) {
             while (numberWaitingOnTheFloorRU.get(this.floor) != 0)
                 Thread.yield();
-
-            //state = STATE_MOVE_UP;
         } else {
             while (numberWaitingOnTheFloorRD.get(this.floor) != 0)
                 Thread.yield();
-            //state = STATE_MOVE_DOWN;
         }
-        //}
-        //System.out.println("state from change " + this.state);
     }
 
     public void run() {
-        //logger.trace("Лифт готов к работе. " + floor + " этаж");
         while (true) {
             while (!ready)
                 Thread.yield();
-            //changeNumberOnTheFloor();
-            //  stateDoor = DOOR_CLOSE;*/
-            // System.out.println(state);
-            /*try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }*/
             switch (state) {
                 case STATE_MOVE_UP_EMPTY:
                     up(true);
@@ -325,15 +309,16 @@ public class Lift implements ILift, Runnable, ProjectConstants {
                     down(false);
                     break;
                 case STATE_STOP:
+                    ready = false;
                     if (queueCalls.size() != 0) {
                         Call temp = queueCalls.remove(0);
-                        //logger.trace("Size is " + queueCalls.size());
                         while (queueCalls.contains(temp))
                             queueCalls.remove(temp);
-                        //logger.trace("Size is " + queueCalls.size());
                         decrementWaitingOnTheFloor(temp.getFloor(), temp.getRouteCall());
                         callOuter(temp.getFloor(), temp.getRouteCall(), temp.getIdPassenger());
-                        changeNumberOnTheFloor();
+                    }else{
+                        ready = false;
+                        logger.trace("Лифт свободен, очередь пуста. Ожидается вызов");
                     }
                     break;
             }

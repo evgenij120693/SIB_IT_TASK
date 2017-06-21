@@ -1,11 +1,11 @@
 /**
  * Created by Evgenij on 19.06.2017.
  */
-public class Passenger implements ProjectConstants{
+public class Passenger extends Thread implements ProjectConstants{
 
     private int startFloor;
     private int finalFloor;
-    private float id = Thread.currentThread().getId();
+    private float id;
     private ILift lift;
 
     public Passenger(int startFloor, int finalFloor, ILift lift) {
@@ -22,9 +22,7 @@ public class Passenger implements ProjectConstants{
         return finalFloor;
     }
 
-    public float getName() {
-        return id;
-    }
+
     public void callLift(){
         boolean route;
         if(startFloor>finalFloor){
@@ -33,14 +31,18 @@ public class Passenger implements ProjectConstants{
             route = ROUTE_UP;
         }
         lift.callOuter(startFloor,route, id);
-        while(lift.getFloor()!=startFloor || lift.getStateDoor()!=DOOR_OPEN
+        while(lift.getFloor()!=startFloor || lift.getState()!= STATE_IN_OUT_PASSENGER
                  || lift.getRouteCallLift() != route ) {
 
             Thread.yield();
         }
-        // System.out.println(lift.getState() + " pessenger");
-        //System.out.println("Переключение");
         lift.callInner(finalFloor, route, id);
 
+    }
+
+    @Override
+    public void run() {
+        id = Thread.currentThread().getId();
+        callLift();
     }
 }
