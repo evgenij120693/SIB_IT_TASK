@@ -8,7 +8,6 @@ public interface ILift extends Runnable{
     public void callInner(int floor, boolean route, float idPassenger);
     public int getFloor();
     public int getState();
-    public boolean getReady();
     public boolean getRouteCallLift();
 
     @Override

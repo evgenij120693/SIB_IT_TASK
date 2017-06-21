@@ -1,11 +1,11 @@
 package ru.svetozarov.Home;
 
-import ru.svetozarov.ConsumerForHome;
+import ru.svetozarov.ProducerConsumer.ConsumerForHome;
 import ru.svetozarov.Exception.ExceptionCountFloor;
 import ru.svetozarov.Lift.ILift;
-import ru.svetozarov.Passenger;
-import ru.svetozarov.ProducerForHome;
-import ru.svetozarov.ProjectConstants;
+import ru.svetozarov.Passenger.Passenger;
+import ru.svetozarov.ProducerConsumer.ProducerForHome;
+import ru.svetozarov.Other.ProjectConstants;
 
 import java.util.ArrayList;
 

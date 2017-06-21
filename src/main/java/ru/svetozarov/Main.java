@@ -13,14 +13,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class Main {
     public static void main(String[] args) {
        /* CopyOnWriteArrayList<Call> queueCalls = new CopyOnWriteArrayList<Call>();
-        ru.svetozarov.IElectricMotor electricMotor = new ru.svetozarov.ElectricMotor(1000,1500, 2000);
+        ru.svetozarov.Lift.ElectricMotor.IElectricMotor electricMotor = new ru.svetozarov.Lift.ElectricMotor(1000,1500, 2000);
         ru.svetozarov.Lift.ILift smallLift = new Lift(electricMotor,9, "пассажирский");
 
 
         Thread thread1 = new Thread(new Runnable() {
             @Override
             public void run() {
-                ru.svetozarov.Passenger passenger1 = new ru.svetozarov.Passenger(1,4,  smallLift);
+                ru.svetozarov.Passenger.Passenger passenger1 = new ru.svetozarov.Passenger.Passenger(1,4,  smallLift);
                 passenger1.callLift();
                // smallLift.callDownInner(passenger1.getFinalFloor());
             }
@@ -28,7 +28,7 @@ public class Main {
         Thread thread2 = new Thread(new Runnable() {
             @Override
             public void run() {
-                ru.svetozarov.Passenger passenger2 = new ru.svetozarov.Passenger(8,2, smallLift);
+                ru.svetozarov.Passenger.Passenger passenger2 = new ru.svetozarov.Passenger.Passenger(8,2, smallLift);
                 passenger2.callLift();
             }
         });
@@ -36,14 +36,14 @@ public class Main {
         Thread thread4 = new Thread(new Runnable() {
             @Override
             public void run() {
-                ru.svetozarov.Passenger passenger4 = new ru.svetozarov.Passenger(1,5, smallLift);
+                ru.svetozarov.Passenger.Passenger passenger4 = new ru.svetozarov.Passenger.Passenger(1,5, smallLift);
                 passenger4.callLift();
             }
         });
         Thread thread5 = new Thread(new Runnable() {
             @Override
             public void run() {
-                ru.svetozarov.Passenger passenger5 = new ru.svetozarov.Passenger(3,7,  smallLift);
+                ru.svetozarov.Passenger.Passenger passenger5 = new ru.svetozarov.Passenger.Passenger(3,7,  smallLift);
                 passenger5.callLift();
             }
         });
@@ -72,7 +72,7 @@ public class Main {
                 Thread tempThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        ru.svetozarov.Passenger passenger = new ru.svetozarov.Passenger(startFloor, finalFloor,smallLift);
+                        ru.svetozarov.Passenger.Passenger passenger = new ru.svetozarov.Passenger.Passenger(startFloor, finalFloor,smallLift);
                     }
                 });
             }
@@ -87,7 +87,7 @@ public class Main {
             queueCalls.remove(temp);
         System.out.println(queueCalls.size());*/
         try {
-            Home home = new Home(10, 14);
+            Home home = new Home(10, 4);
             home.startWork();
         } catch (ExceptionCountFloor exceptionCountFloor) {
             exceptionCountFloor.printStackTrace();
