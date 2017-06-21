@@ -87,10 +87,12 @@ public class Main {
             queueCalls.remove(temp);
         System.out.println(queueCalls.size());*/
         try {
-            Home home = new Home(10, 4);
-            home.startWork();
+            Home home = new Home(10, 1);
+           home.startWork();
+            System.out.println("jg");
         } catch (ExceptionCountFloor exceptionCountFloor) {
             exceptionCountFloor.printStackTrace();
         }
+        System.out.println("jg");
     }
 }

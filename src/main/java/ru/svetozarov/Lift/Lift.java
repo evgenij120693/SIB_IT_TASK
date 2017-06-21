@@ -1,6 +1,6 @@
 package ru.svetozarov.Lift;
 import org.apache.log4j.Logger;
-import org.apache.log4j.spi.LoggerFactory;
+import ru.svetozarov.Lift.Call.Call;
 import ru.svetozarov.Lift.ElectricMotor.IElectricMotor;
 import ru.svetozarov.Other.ProjectConstants;
 
@@ -24,6 +24,7 @@ public class Lift implements ILift,  ProjectConstants {
     private final String typeLift;
     private Logger logger;
     private CopyOnWriteArrayList<Call> queueCalls = new CopyOnWriteArrayList<Call>();//Очердь вызовов
+    //количество ожидающих на n-ом этаже, которые вызвали лифт вверх  и вниз
     private ConcurrentHashMap<Integer, Integer> numberWaitingOnTheFloorRU = new ConcurrentHashMap<>();
     private ConcurrentHashMap<Integer, Integer> numberWaitingOnTheFloorRD = new ConcurrentHashMap<>();
     private Object lock = new Object();
@@ -71,13 +72,15 @@ public class Lift implements ILift,  ProjectConstants {
                 logger.trace("Лифт поехал за пассажиром №" + idPassenger + " на " + finalFloor + " этаж");
                 ready = true;
                 idFirstPassenger = idPassenger;
-            }
-            else if ((state == STATE_MOVE_UP && floor < this.finalFloor && floor > this.floor)
+            } else if ((state == STATE_MOVE_UP && floor < this.finalFloor && floor > this.floor)
                     || (state == STATE_MOVE_DOWN && floor > this.finalFloor && floor < this.floor)) {
                 addCall(floor, route, CALL_OUTER, idPassenger);
-                logger.trace("Добавили вызов пассажира №" + idPassenger + " на " + floor + " этаже.");
-            }
-            else if (state == STATE_IN_OUT_PASSENGER
+                String temp = "ВВЕРХ";
+                if(route == ROUTE_DOWN)
+                    temp = "ВНИЗ";
+                logger.trace("Добавили вызов пассажира №" + idPassenger + "в очередь. Этаж "
+                        + floor + ", напрваление "+temp);
+            } else if (state == STATE_IN_OUT_PASSENGER
                     && floor == this.floor && this.routeCallLift == route) {
                 logger.trace("Пассажир №" + idPassenger + " заходит.");
             } else if (state == STATE_STOP && floor == this.floor) {
@@ -115,7 +118,7 @@ public class Lift implements ILift,  ProjectConstants {
                         addCall(this.finalFloor, route, CALL_INNER, idFirstPassenger);
                         this.finalFloor = floor;
                         idFirstPassenger = idPassenger;
-                    } else
+                    } else if(this.finalFloor < floor)
                         addCall(floor, route, CALL_INNER, idPassenger);
                 } else {
                     idFirstPassenger = idPassenger;
@@ -128,7 +131,7 @@ public class Lift implements ILift,  ProjectConstants {
                         addCall(this.finalFloor, route, CALL_INNER, idFirstPassenger);
                         this.finalFloor = floor;
                         idFirstPassenger = idPassenger;
-                    } else
+                    } else if(this.finalFloor > floor)
                         addCall(floor, route, CALL_INNER, idPassenger);
                 } else {
                     idFirstPassenger = idPassenger;
@@ -138,6 +141,8 @@ public class Lift implements ILift,  ProjectConstants {
             }
             decrementWaitingOnTheFloor(this.floor, route);//удаляем пассажира из очереди ожидающих
             checkNumberWaitingAndChangeState(route);//проверяем есть ли еще пассажиры-попутчики на этом этаже
+            System.out.println("RD"+numberWaitingOnTheFloorRD.get(this.floor)+"state "+this.state);
+            System.out.println("RU"+numberWaitingOnTheFloorRU.get(this.floor)+"state "+this.state);
         }
     }
 
@@ -160,7 +165,7 @@ public class Lift implements ILift,  ProjectConstants {
                 for (Call call :
                         queueCalls) {
                     if (this.floor == call.getFloor() && call.getRouteCall() == ROUTE_DOWN) {
-                        logger.trace("Лифт остановился");
+                        //logger.trace("Лифт остановился");
                         if (call.getModeCall() == CALL_INNER) {
                             logger.trace("Вышел  пассажир №" + call.getIdPassenger());
                         }
@@ -207,7 +212,7 @@ public class Lift implements ILift,  ProjectConstants {
                 for (Call call :
                         queueCalls) {
                     if (this.floor == call.getFloor() && call.getRouteCall() == ROUTE_UP) {
-                        logger.trace("Лифт остановился");
+                        //logger.trace("Лифт остановился");
                         if (call.getModeCall() == CALL_INNER) {
                             logger.trace("Вышел пассажир №" + call.getIdPassenger());
                         }
@@ -296,7 +301,7 @@ public class Lift implements ILift,  ProjectConstants {
     }
 
     /**
-     * Функция, описывающая работу лифта. В зависимости от состояния совершается определенное действие.
+     * Функция, описывающая работу лифта. Каждому состоянию соответсвует свое действие.
      */
     public void run() {
         work:while (true) {
@@ -331,6 +336,8 @@ public class Lift implements ILift,  ProjectConstants {
                     break;
             }
         }
+        System.out.println(Thread.activeCount());
+        System.out.println("trup");
     }
 }
 

@@ -2,6 +2,8 @@ package ru.svetozarov.Lift.ElectricMotor;
 
 /**
  * Created by Evgenij on 19.06.2017.
+ * Класс реализует равномерное по времени передвижение между
+ * этажами ввер и вниз и остановку.
  */
 public class ElectricMotor implements IElectricMotor {
     private int timeUp;

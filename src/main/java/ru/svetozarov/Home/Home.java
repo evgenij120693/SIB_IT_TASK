@@ -43,7 +43,6 @@ public class Home implements ProjectConstants {
         consumerPassenger.startPassenger(arrayPassengerForSmallLift);
         //consumerPassenger.startPassenger(arrayPassengerForBigLift);
     }
-
     private void startLift(){
         consumerPassenger.startLift(passengerLift, freightLift);
     }

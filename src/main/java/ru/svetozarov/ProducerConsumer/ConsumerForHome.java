@@ -22,7 +22,6 @@ public class ConsumerForHome {
     public void startPassenger(ArrayList<Passenger> arrayPassenger){
         for (Passenger passenger :
                 arrayPassenger ) {
-
             passenger.start();
         }
     }
