@@ -12,7 +12,7 @@ public class Call {
     private int floor;
     private boolean routeCall;
     private boolean modeCall;
-    private float idPassenger;
+    private int idPassenger;
 
     public int getFloor() {
         return floor;
@@ -26,11 +26,11 @@ public class Call {
         return modeCall;
     }
 
-    public float getIdPassenger() {
+    public int getIdPassenger() {
         return idPassenger;
     }
 
-    public Call(int floor, boolean routeCall, boolean modeCall, float idPassenger) {
+    public Call(int floor, boolean routeCall, boolean modeCall, int idPassenger) {
         this.floor = floor;
         this.routeCall = routeCall;
         this.modeCall = modeCall;
@@ -44,6 +44,7 @@ public class Call {
         result = prime * result + Boolean.valueOf(routeCall).hashCode();
         result = prime * result + floor;
         result = prime * result + Boolean.valueOf(modeCall).hashCode();
+        result = prime * result + idPassenger;
         return result;
     }
 
@@ -59,6 +60,7 @@ public class Call {
         Call call = (Call) obj;
         return floor == call.floor
                 && (routeCall == call.routeCall)
-                && (modeCall == call.modeCall);
+                && (modeCall == call.modeCall)
+                && (idPassenger == call.idPassenger);
     }
 }

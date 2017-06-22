@@ -12,7 +12,7 @@ public class Passenger extends Thread implements ProjectConstants {
 
     private int startFloor;
     private int finalFloor;
-    private float id;
+    private int id;
     private ILift lift;
 
     public Passenger(int startFloor, int finalFloor, ILift lift) {
@@ -53,8 +53,8 @@ public class Passenger extends Thread implements ProjectConstants {
     }
     @Override
     public void run() {
-        this.id = Thread.currentThread().getId();
-        delay();
+        this.id =(int) Thread.currentThread().getId();
+       // delay();
         callLift();
     }
 }

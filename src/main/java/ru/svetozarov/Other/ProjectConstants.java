@@ -17,12 +17,12 @@ public interface ProjectConstants {
     int STATE_MOVE_DOWN = 1;//движение вниз с пассажиром(ами)
     int STATE_STOP = 0;// конечная остановка, после которой лифт свободен
     int STATE_IN_OUT_PASSENGER = 5;// промежуточные остановки
-    int TIME_DOWN_FOR_PASSENGER_LIFT = 1500;
-    int TIME_UP_FOR_PASSENGER_LIFT = 2000;
-    int TIME_STOP_FOR_PASSENGER_LIFT = 2000;
-    int TIME_DOWN_FOR_FREIGHT_LIFT = 2000;
-    int TIME_UP_FOR_FREIGHT_LIFT = 2500;
-    int TIME_STOP_FOR_FREIGHT_LIFT = 2500;
+    int TIME_DOWN_FOR_PASSENGER_LIFT = 150;
+    int TIME_UP_FOR_PASSENGER_LIFT = 200;
+    int TIME_STOP_FOR_PASSENGER_LIFT = 200;
+    int TIME_DOWN_FOR_FREIGHT_LIFT = 200;
+    int TIME_UP_FOR_FREIGHT_LIFT = 250;
+    int TIME_STOP_FOR_FREIGHT_LIFT = 250;
     String PASSENGER_LIFT = "Пассажирский";
     String FREIGHT_LIFT = "Грузовой";
 

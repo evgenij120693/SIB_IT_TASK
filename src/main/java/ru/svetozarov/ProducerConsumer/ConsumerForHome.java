@@ -15,7 +15,7 @@ public class ConsumerForHome {
         Thread thread1 = new Thread(firstLift);
         Thread thread2 = new Thread(secondLift);
         thread1.start();
-        thread2.start();
+        //thread2.start();
         logger.trace("Лифты включены.");
     }
 
